@@ -22,6 +22,7 @@ export default defineConfig(({mode}) => ({
       '@store': path.resolve(__dirname, 'src/store'),
       '@css': path.resolve(__dirname, 'src/shared/styles'),
       '@utils': path.resolve(__dirname, 'src/shared/utils'),
+      '@@typings': path.resolve(__dirname, 'src/shared/types'),
       '@components': path.resolve(__dirname, 'src/shared/components'),
     },
   },
