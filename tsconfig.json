@@ -1,7 +1,26 @@
+
 {
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@images/*": ["src/assets/images/*"],
+      "@features/*": ["src/features/*"],
+      "@store/*": ["src/store/*"],
+      "@css/*": ["src/shared/styles/*"],
+      "@utils/*": ["src/shared/utils/*"],
+      "@types/*": ["src/shared/types/*"],
+      "@components/*": ["src/shared/components/*"]
+    }
+  }
 }
