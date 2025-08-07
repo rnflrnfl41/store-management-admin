@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import logo from "@image/company-logo.png";
+import logo from "@images/company-logo.png";
 
 type FormState = {
     userId: string;
@@ -13,7 +13,7 @@ type FormState = {
 export default function Login() {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
 
     const [formState, setFormState] = useState<FormState>({
         userId: "",
