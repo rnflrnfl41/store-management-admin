@@ -6,6 +6,7 @@ import { useAppInitialization } from '@utils/useAppInitialization';
 import GlobalSpinner from '@components/GlobalSpinner';
 import Login from '@features/Auth/Login';
 import store from '@store/store';
+import GlobalAlert from '@components/GlobalAlert';
 
 function Layout() {
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +31,7 @@ function AppContent() {
   return (
     <>
       <GlobalSpinner />
+      <GlobalAlert />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Layout />} />

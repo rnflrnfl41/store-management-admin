@@ -69,6 +69,125 @@ const clearUserInfo = async () => {
   window.location.href = "/login";
 };
 
+// 서버 응답에서 메시지 처리 함수
+const handleServerMessage = (response: AxiosResponse) => {
+  const data = response.data;
+  
+  // 서버에서 성공 메시지를 보낸 경우
+  if (data.message && data.success) {
+    store.dispatch(
+      setMessage({
+        message: data.message,
+        type: "success",
+      })
+    );
+  }
+};
+
+// 서버 에러 메시지 처리 함수
+const handleServerError = (error: AxiosError<ApiErrorResponse>) => {
+  const status = error.response?.status;
+  const errorData = error.response?.data;
+
+  // 서버에서 보낸 에러 메시지가 있는 경우
+  if (errorData?.message) {
+    store.dispatch(
+      setMessage({
+        message: errorData.message,
+        type: "error",
+      })
+    );
+    return;
+  }
+
+  // HTTP 상태 코드별 기본 메시지
+  switch (status) {
+    case 400:
+      store.dispatch(
+        setMessage({
+          message: "잘못된 요청입니다. 입력값을 확인해주세요.",
+          type: "error",
+        })
+      );
+      break;
+    case 401:
+      store.dispatch(
+        setMessage({
+          message: "인증이 필요합니다. 다시 로그인해주세요.",
+          type: "error",
+        })
+      );
+      break;
+    case 403:
+      store.dispatch(
+        setMessage({
+          message: "접근 권한이 없습니다.",
+          type: "error",
+        })
+      );
+      break;
+    case 404:
+      store.dispatch(
+        setMessage({
+          message: "요청한 리소스를 찾을 수 없습니다.",
+          type: "error",
+        })
+      );
+      break;
+    case 409:
+      store.dispatch(
+        setMessage({
+          message: "이미 존재하는 데이터입니다.",
+          type: "error",
+        })
+      );
+      break;
+    case 422:
+      store.dispatch(
+        setMessage({
+          message: "입력값이 올바르지 않습니다.",
+          type: "error",
+        })
+      );
+      break;
+    case 500:
+      store.dispatch(
+        setMessage({
+          message: "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+          type: "error",
+        })
+      );
+      break;
+    case 502:
+    case 503:
+    case 504:
+      store.dispatch(
+        setMessage({
+          message: "서버가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.",
+          type: "error",
+        })
+      );
+      break;
+    default:
+      // 네트워크 오류
+      if (!error.response) {
+        store.dispatch(
+          setMessage({
+            message: "네트워크 연결을 확인해주세요.",
+            type: "error",
+          })
+        );
+      } else {
+        store.dispatch(
+          setMessage({
+            message: error.message || "알 수 없는 오류가 발생했습니다.",
+            type: "error",
+          })
+        );
+      }
+  }
+};
+
 // 인증이 필요 없는 API용 인스턴스 (로그인, 회원가입 등)
 export const publicAxiosInstance = axios.create({
   baseURL: "http://localhost:8080",
@@ -95,39 +214,19 @@ publicAxiosInstance.interceptors.request.use(
   }
 );
 
-// public 인스턴스용 응답 인터셉터 (에러 처리만)
+// public 인스턴스용 응답 인터셉터 (성공/에러 메시지 처리)
 publicAxiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     store.dispatch(stopLoading());
+    
+    // 서버에서 성공 메시지를 보낸 경우 처리
+    handleServerMessage(response);
+    
     return response;
   },
   async (error: AxiosError<ApiErrorResponse>) => {
     store.dispatch(stopLoading());
-
-    const status = error.response?.status;
-
-    // 기타 에러 처리
-    if (status && status >= 500) {
-      store.dispatch(
-        setMessage({
-          message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
-          type: "error",
-        })
-      );
-    } else {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "알 수 없는 오류가 발생했습니다.";
-
-      store.dispatch(
-        setMessage({
-          message,
-          type: "error",
-        })
-      );
-    }
-
+    handleServerError(error);
     return Promise.reject(error);
   }
 );
@@ -156,6 +255,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     store.dispatch(stopLoading());
+    
+    // 서버에서 성공 메시지를 보낸 경우 처리
+    handleServerMessage(response);
+    
     return response;
   },
 
@@ -205,27 +308,8 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 기타 에러 처리
-    if (status && status >= 500) {
-      store.dispatch(
-        setMessage({
-          message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
-          type: "error",
-        })
-      );
-    } else {
-      const message =
-        error.response?.data?.message ||
-        error.message ||
-        "알 수 없는 오류가 발생했습니다.";
-
-      store.dispatch(
-        setMessage({
-          message,
-          type: "error",
-        })
-      );
-    }
+    // 서버 에러 메시지 처리
+    handleServerError(error);
 
     return Promise.reject(error);
   }
