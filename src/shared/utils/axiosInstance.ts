@@ -69,11 +69,68 @@ const clearUserInfo = async () => {
   window.location.href = "/login";
 };
 
+// 인증이 필요 없는 API용 인스턴스 (로그인, 회원가입 등)
+export const publicAxiosInstance = axios.create({
+  baseURL: "http://localhost:8080",
+  timeout: 10000,
+  withCredentials: true,
+});
+
+// 인증이 필요한 API용 인스턴스 (토큰 자동 추가)
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   timeout: 10000, // 10초 타임아웃 추가
   withCredentials: true,
 });
+
+// public 인스턴스용 요청 인터셉터 (로딩만 관리)
+publicAxiosInstance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    store.dispatch(startLoading());
+    return config;
+  },
+  (error: AxiosError) => {
+    store.dispatch(stopLoading());
+    return Promise.reject(error);
+  }
+);
+
+// public 인스턴스용 응답 인터셉터 (에러 처리만)
+publicAxiosInstance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    store.dispatch(stopLoading());
+    return response;
+  },
+  async (error: AxiosError<ApiErrorResponse>) => {
+    store.dispatch(stopLoading());
+
+    const status = error.response?.status;
+
+    // 기타 에러 처리
+    if (status && status >= 500) {
+      store.dispatch(
+        setMessage({
+          message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+          type: "error",
+        })
+      );
+    } else {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "알 수 없는 오류가 발생했습니다.";
+
+      store.dispatch(
+        setMessage({
+          message,
+          type: "error",
+        })
+      );
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // 요청 인터셉터 설정 (토큰 추가)
 axiosInstance.interceptors.request.use(
