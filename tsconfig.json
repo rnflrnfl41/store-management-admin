@@ -20,6 +20,7 @@
       "@css/*": ["src/shared/styles/*"],
       "@utils/*": ["src/shared/utils/*"],
       "@types/*": ["src/shared/types/*"],
+      "@types": ["src/shared/types/index.ts"],
       "@components/*": ["src/shared/components/*"]
     }
   }
