@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import store from "@store/store";
 import { setMessage } from "@store/messageSlice";
 import { startLoading, stopLoading } from "@store/loadingSlice";
-import { logout, updateToken, selectToken } from '@store/userSlice';
+import { logout, updateAccessToken } from '@store/userSlice';
 import type { ApiErrorResponse } from '@types';
 
 // refresh token 요청 중인지 확인하는 플래그
@@ -39,25 +39,63 @@ const refreshAccessToken = async (): Promise<string> => {
       }
     );
 
-    const newToken = response.data.token;
+    const newToken = response.data.accessToken;
 
     // Redux에만 새 토큰 저장 (localStorage 사용 안함)
-    store.dispatch(updateToken(newToken));
+    store.dispatch(updateAccessToken(newToken));
 
     return newToken;
-  } catch (error) {
-    // refresh token도 만료된 경우
+  } catch (error: any) {
+    // 서버에서 보낸 에러 메시지가 있는 경우 우선 처리
+    const errorData = error.response?.data;
+    if (errorData?.message) {
+      store.dispatch(
+        setMessage({
+          message: errorData.message,
+          type: "error",
+        })
+      );
+    } else {
+      // 서버에서 메시지를 보내지 않은 예외적인 경우만 클라이언트에서 처리
+      const status = error.response?.status;
+      
+      switch (status) {
+        case 500:
+        case 502:
+        case 503:
+          // 서버 오류
+          store.dispatch(
+            setMessage({
+              message: "서버 오류로 인해 토큰 갱신에 실패했습니다. 잠시 후 다시 시도해주세요.",
+              type: "error",
+            })
+          );
+          break;
+        default:
+          // 네트워크 오류
+          if (!error.response) {
+            store.dispatch(
+              setMessage({
+                message: "네트워크 연결을 확인해주세요.",
+                type: "error",
+              })
+            );
+          }
+      }
+    }
+
+    // 모든 refresh token 실패 시 로그아웃 처리
     store.dispatch(logout());
     throw error;
   }
 };
 
 // 사용자 정보 정리 함수
-const clearUserInfo = async () => {
+const clearUserInfo = async (reason: string = "세션이 만료되었습니다. 다시 로그인해주세요.") => {
   store.dispatch(logout());
 
   await Swal.fire({
-    html: "세션이 만료되었습니다. 다시 로그인해주세요.",
+    html: reason,
     icon: "warning",
     confirmButtonText: "확인",
     confirmButtonColor: "#3085d6",
@@ -237,7 +275,7 @@ axiosInstance.interceptors.request.use(
     store.dispatch(startLoading());
 
     const state = store.getState();
-    const token = selectToken(state);
+    const token = state.user.userInfo?.accessToken;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
