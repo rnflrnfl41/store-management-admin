@@ -3,7 +3,7 @@ export interface UserInfo {
   loginId: string;
   storeId: number;
   userName: string;
-  token: string;
+  accessToken: string;
 }
 
 export interface LoginRequest {
@@ -16,5 +16,5 @@ export interface LoginResponse {
   loginId: string;
   storeId: number;
   userName: string;
-  token: string;
+  accessToken: string;
 }
