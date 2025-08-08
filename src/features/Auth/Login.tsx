@@ -1,8 +1,8 @@
-import React, { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { publicAxiosInstance } from "@utils/axiosInstance";
-import { loginSuccess, loginFailure } from "@store/userSlice";
+import { loginSuccess } from "@store/userSlice";
 import { setMessage } from "@store/messageSlice";
 import logo from "@images/company-logo.png";
 import "@css/login.css";
@@ -88,7 +88,6 @@ export default function Login() {
             navigate("/dashboard");
 
         } catch (error) {
-            dispatch(loginFailure());
             console.error("로그인 실패:", error);
             // 에러 메시지는 axiosInstance에서 자동으로 처리됨
         }

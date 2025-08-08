@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import './App.css'
@@ -9,8 +8,6 @@ import store from '@store/store';
 import GlobalAlert from '@components/GlobalAlert';
 
 function Layout() {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <div style={{ display: 'flex', width: '100%' }}>
       {/* <SideBarLayout /> */}
