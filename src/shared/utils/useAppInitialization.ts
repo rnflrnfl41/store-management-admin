@@ -1,27 +1,26 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { loginSuccess, loginFailure } from "@store/userSlice";
-import type { UserInfo } from "@types";
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { publicAxiosInstance } from './axiosInstance';
+import { loginSuccess, loginFailure } from '@store/userSlice';
+import type { UserInfo } from '@types';
 
-// 서버에서 현재 사용자 정보를 가져오는 API
+// 서버에서 현재 사용자 정보를 가져오는 함수
 const getCurrentUserFromServer = async (): Promise<UserInfo | null> => {
   try {
-    // refresh token이 쿠키에 있다면 서버에서 새 access token과 사용자 정보를 반환
-    const response = await fetch("/api/auth/me", {
-      method: "GET",
-      credentials: "include", // 쿠키 포함
-    });
-
-    if (response.ok) {
-      return await response.json();
+    // 인증 불필요 API용 인스턴스 사용 (쿠키 기반 인증)
+    const response = await publicAxiosInstance.get('/auth/me');
+    
+    if (response.data) {
+      return response.data;
     }
     return null;
   } catch (error) {
-    console.error("사용자 정보 조회 실패:", error);
+    console.log('사용자 정보 없음 또는 에러:', error);
     return null;
   }
 };
 
+// 앱 초기화 훅
 export const useAppInitialization = () => {
   const dispatch = useDispatch();
 
@@ -48,15 +47,29 @@ export const useAppInitialization = () => {
   }, [dispatch]);
 };
 
-// App.tsx에서 사용
-// import { useAppInitialization } from '@/hooks/useAppInitialization';
-//
-// function App() {
-//   useAppInitialization(); // 앱 시작 시 인증 상태 복구
-//
-//   return (
-//     <div className="App">
-//       {/* 앱 컴포넌트들 */}
-//     </div>
-//   );
-// }
+// 직접 호출용 함수 (훅 외부에서 사용할 때)
+export const initializeApp = async () => {
+  try {
+    const userInfo = await getCurrentUserFromServer();
+    
+    if (userInfo) {
+      // store 직접 사용 (훅 외부에서)
+      const { default: store } = await import('@store/store');
+      const { loginSuccess, loginFailure } = await import('@store/userSlice');
+      
+      store.dispatch(loginSuccess(userInfo));
+      return userInfo;
+    } else {
+      const { default: store } = await import('@store/store');
+      const { loginFailure } = await import('@store/userSlice');
+      store.dispatch(loginFailure());
+      return null;
+    }
+  } catch (error) {
+    console.error("앱 초기화 실패:", error);
+    const { default: store } = await import('@store/store');
+    const { loginFailure } = await import('@store/userSlice');
+    store.dispatch(loginFailure());
+    return null;
+  }
+};
