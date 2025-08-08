@@ -1,36 +1,52 @@
 import { useState } from 'react'
-import reactLogo from '@images/react.svg'
-import viteLogo from '/vite.svg'
+import { Provider } from 'react-redux'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import './App.css'
 import { useAppInitialization } from '@utils/useAppInitialization';
+import GlobalSpinner from '@components/GlobalSpinner';
+import Login from '@features/Auth/Login';
+import store from '@store/store';
 
-function App() {
-  //useAppInitialization(); //새로고침시 유저정보 확인 및 redux에 저장
-  const [count, setCount] = useState(0)
+function Layout() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div style={{ display: 'flex', width: '100%' }}>
+      {/* <SideBarLayout /> */}
+      <div style={{ width: '85%', height: '100vh' }}>
+        {/* <Header onClickCompanySelect={() => getCompanyList()} /> */}
+        <div style={{ padding: '20px' }}>
+          <h1>메인 페이지</h1>
+          <p>로그인 성공 후 보이는 페이지입니다.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AppContent() {
+  useAppInitialization(); // 앱 시작 시 자동으로 인증 상태 확인
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <GlobalSpinner />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Layout />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     </>
+  )
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </Provider>
   )
 }
 
