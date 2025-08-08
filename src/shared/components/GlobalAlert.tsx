@@ -13,7 +13,7 @@ const GlobalAlert: React.FC = () => {
       const showAlert = async () => {
         await Swal.fire({
           html: message,
-          icon: type,
+          icon: type || 'info',
           confirmButtonText: '확인',
           confirmButtonColor: '#3085d6',
           allowOutsideClick: false,
