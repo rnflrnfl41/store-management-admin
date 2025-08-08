@@ -5,7 +5,7 @@ import store from "@store/store";
 import { setMessage } from "@store/messageSlice";
 import { startLoading, stopLoading } from "@store/loadingSlice";
 import { logout, updateToken, selectToken } from '@store/userSlice';
-import { ApiErrorResponse } from '@types';
+import type { ApiErrorResponse } from '@types';
 
 // refresh token 요청 중인지 확인하는 플래그
 let isRefreshing = false;
