@@ -2,7 +2,8 @@ import React, { useState, useEffect, type FormEvent, type ChangeEvent } from "re
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { publicAxiosInstance } from "@utils/axiosInstance";
-import { loginSuccess, loginStart, loginFailure } from "@store/userSlice";
+import { loginSuccess, loginFailure } from "@store/userSlice";
+import { setMessage } from "@store/messageSlice";
 import logo from "@images/company-logo.png";
 import "@css/login.css";
 
@@ -29,31 +30,59 @@ export default function Login() {
         rememberMe: false,
     });
 
+    // 유효성 검사 함수
+    const validateForm = (): boolean => {
+        // 아이디 검증
+        if (!formState.userId.trim()) {
+            dispatch(setMessage({
+                message: "아이디를 입력해주세요.",
+                type: "error"
+            }));
+            return false;
+        }
+
+        // 비밀번호 검증
+        if (!formState.password) {
+            dispatch(setMessage({
+                message: "비밀번호를 입력해주세요.",
+                type: "error"
+            }));
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // 유효성 검사
+        if (!validateForm()) {
+            return;
+        }
+
         try {
-            dispatch(loginStart());
+            const response = await publicAxiosInstance.post("/auth/login", {
+                loginId: formState.userId.trim(),
+                password: formState.password,
+            });
 
-            // 테스트용: 실제 API 호출 대신 임시 데이터 사용
-            // const response = await publicAxiosInstance.post("/auth/login", {
-            //     loginId: formState.userId,
-            //     password: formState.password,
-            // });
-
-            // 임시 사용자 데이터 (테스트용)
-            const userData = {
-                userId: 1,
-                loginId: formState.userId,
-                storeId: 1,
-                userName: "테스트 사용자",
-                token: "test-token-123"
-            };
+            const userData = response.data;
 
             dispatch(loginSuccess(userData));
 
-            if (formState.rememberMe) localStorage.setItem('rememberedLoginId', formState.userId);
-            else localStorage.removeItem('rememberedLoginId');
+            // 아이디 기억하기 처리
+            if (formState.rememberMe) {
+                localStorage.setItem('rememberedLoginId', formState.userId.trim());
+            } else {
+                localStorage.removeItem('rememberedLoginId');
+            }
+
+            // 로그인 성공 메시지 표시
+            dispatch(setMessage({
+                message: "로그인되었습니다.",
+                type: "success"
+            }));
 
             // 로그인 성공 후 메인 페이지로 이동
             navigate("/dashboard");
@@ -61,6 +90,7 @@ export default function Login() {
         } catch (error) {
             dispatch(loginFailure());
             console.error("로그인 실패:", error);
+            // 에러 메시지는 axiosInstance에서 자동으로 처리됨
         }
     };
 
