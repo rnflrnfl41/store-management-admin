@@ -1,7 +1,6 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@types';
-import '@css/spinner.css';
+import '@css/GlobalSpinner.css';
 
 const GlobalSpinner = () => {
     const loading = useSelector((state: RootState) => state.loading);
