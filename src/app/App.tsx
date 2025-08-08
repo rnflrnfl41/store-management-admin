@@ -2,8 +2,10 @@ import { useState } from 'react'
 import reactLogo from '@images/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { useAppInitialization } from '@utils/useAppInitialization';
 
 function App() {
+  //useAppInitialization(); //새로고침시 유저정보 확인 및 redux에 저장
   const [count, setCount] = useState(0)
 
   return (
