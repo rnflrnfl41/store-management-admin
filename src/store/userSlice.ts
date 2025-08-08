@@ -6,7 +6,6 @@ import type { UserInfo, UserState } from "@types";
 const initialState: UserState = {
   userInfo: null,
   isAuthenticated: false,
-  isLoading: false,
 };
 
 const userSlice = createSlice({
@@ -17,26 +16,18 @@ const userSlice = createSlice({
     loginSuccess: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
       state.isAuthenticated = true;
-      state.isLoading = false;
-    },
-
-    // 로그인 시작 (로딩 상태)
-    loginStart: (state) => {
-      state.isLoading = true;
     },
 
     // 로그인 실패
     loginFailure: (state) => {
       state.userInfo = null;
       state.isAuthenticated = false;
-      state.isLoading = false;
     },
 
     // 로그아웃
     logout: (state) => {
       state.userInfo = null;
       state.isAuthenticated = false;
-      state.isLoading = false;
     },
 
     // 토큰 업데이트 (refresh token으로 새 access token 받았을 때)
@@ -60,7 +51,6 @@ const userSlice = createSlice({
 
 export const {
   loginSuccess,
-  loginStart,
   loginFailure,
   logout,
   updateToken,
@@ -71,8 +61,6 @@ export const {
 export const selectUser = (state: { user: UserState }) => state.user.userInfo;
 export const selectIsAuthenticated = (state: { user: UserState }) =>
   state.user.isAuthenticated;
-export const selectIsLoading = (state: { user: UserState }) =>
-  state.user.isLoading;
 export const selectUserId = (state: { user: UserState }) =>
   state.user.userInfo?.userId;
 export const selectStoreId = (state: { user: UserState }) =>

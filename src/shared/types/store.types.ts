@@ -20,5 +20,4 @@ export interface RootState {
 export interface UserState {
   userInfo: UserInfo | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
 }
