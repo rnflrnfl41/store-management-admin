@@ -5,14 +5,14 @@ export interface LoadingState {
 }
 
 export interface MessageState {
-  message: string | null;
-  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+  type: 'info' | 'error' | 'success';
 }
 
-// Store 전체 타입 (RootState)
+// Store 전체 타입 (RootState) - 실제 store 구조에 맞게 수정
 export interface RootState {
   user: UserState;
-  loading: LoadingState;
+  loading: boolean; // loadingSlice는 boolean을 반환
   message: MessageState;
   // 다른 slice들...
 }
