@@ -7,7 +7,7 @@ import type { UserInfo } from '@types';
 // 서버에서 현재 사용자 정보를 가져오는 함수
 const getCurrentUserFromServer = async (): Promise<UserInfo | null> => {
   try {
-    const { data } = await publicAxiosInstance.get('/auth/me');
+    const { data } = await publicAxiosInstance.get('/auth/refreshToken');
     return data ?? null;
   } catch (error) {
     console.error('사용자 정보 없음 또는 에러:', error);
