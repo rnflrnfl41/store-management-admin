@@ -41,16 +41,6 @@ export default defineConfig(({mode}) => ({
       output: {
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
-          // mui: ['@mui/material', '@mui/icons-material'],
-          // wijmo: [
-          //   '@grapecity/wijmo',
-          //   '@grapecity/wijmo.input',
-          //   '@grapecity/wijmo.react.input',
-          //   '@grapecity/wijmo.grid',
-          //   '@grapecity/wijmo.react.grid',
-          //   '@grapecity/wijmo.grid.xlsx',
-          //   '@grapecity/wijmo.react.nav'
-          // ],
           vendors: ['axios', 'date-fns', 'sweetalert2']
         }
       }
