@@ -14,6 +14,8 @@ let failedQueue: Array<{
   reject: (error: any) => void;
 }> = [];
 
+const baseUrl = 'http://localhost:8080/api';
+
 // 큐에 쌓인 요청들을 처리하는 함수
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
@@ -34,7 +36,7 @@ const refreshAccessToken = async (): Promise<string> => {
       "/auth/refresh",
       {},
       {
-        baseURL: "http://localhost:8080",
+        baseURL: baseUrl,
         withCredentials: true, // refresh token이 쿠키에 있으므로
       }
     );
@@ -228,14 +230,14 @@ const handleServerError = (error: AxiosError<ApiErrorResponse>) => {
 
 // 인증이 필요 없는 API용 인스턴스 (로그인, 회원가입 등)
 export const publicAxiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: baseUrl,
   timeout: 10000,
   withCredentials: true,
 });
 
 // 인증이 필요한 API용 인스턴스 (토큰 자동 추가)
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: baseUrl,
   timeout: 10000, // 10초 타임아웃 추가
   withCredentials: true,
 });
