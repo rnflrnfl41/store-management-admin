@@ -104,16 +104,11 @@ export default function Login() {
     return (
         <div className="login-container">
             <div className="login-card">
-                <div className="login-header">
-                    <img 
+                <img 
                         src={logo} 
                         alt="로고" 
                         className="login-logo"
                     />
-                    <h2 className="login-title">
-                        로그인
-                    </h2>
-                </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
