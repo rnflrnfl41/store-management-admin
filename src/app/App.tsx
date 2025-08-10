@@ -7,21 +7,10 @@ import Login from '@features/Auth/Login';
 import store from '@store/store';
 import GlobalAlert from '@components/GlobalAlert';
 import { selectUserInfo } from '@store/userSlice';
-
-function Layout() {
-  return (
-    <div style={{ display: 'flex', width: '100%' }}>
-      {/* <SideBarLayout /> */}
-      <div style={{ width: '85%', height: '100vh' }}>
-        {/* <Header onClickCompanySelect={() => getCompanyList()} /> */}
-        <div style={{ padding: '20px' }}>
-          <h1>메인 페이지</h1>
-          <p>로그인 성공 후 보이는 페이지입니다.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+import MainLayout from '@components/Layout/MainLayout';
+import Dashboard from '@features/Dashboard/Dashboard';
+import StoreList from '@features/Store/StoreList';
+import UserList from '@features/User/UserList';
 
 function AppContent() {
   const userInfo = useSelector(selectUserInfo);
@@ -43,8 +32,12 @@ function AppContent() {
             isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
           }
         />
-        <Route path="/dashboard" element={<Layout />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<MainLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="stores" element={<StoreList />} />
+          <Route path="users" element={<UserList />} />
+        </Route>
+        <Route index element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </>
