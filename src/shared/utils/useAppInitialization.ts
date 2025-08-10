@@ -1,22 +1,26 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { publicAxiosInstance } from './axiosInstance';
-import { loginSuccess, loginFailure } from '@store/userSlice';
-import type { UserInfo } from '@types';
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { publicAxiosInstance } from "./axiosInstance";
+import { loginSuccess, loginFailure } from "@store/userSlice";
+import type { UserInfo } from "@types";
 
 // 서버에서 현재 사용자 정보를 가져오는 함수
 const getCurrentUserFromServer = async (): Promise<UserInfo | null> => {
   try {
-    const { data } = await publicAxiosInstance.get('/auth/refreshToken');
+    const { data } = await publicAxiosInstance.get("/auth/refreshToken");
+
     return data ?? null;
   } catch (error) {
-    console.error('사용자 정보 없음 또는 에러:', error);
+    console.log(error);
     return null;
   }
 };
 
 // Redux 상태 갱신 함수 (공통)
-const handleUserAuthState = (userInfo: UserInfo | null, dispatchFn: (action: any) => void) => {
+const handleUserAuthState = (
+  userInfo: UserInfo | null,
+  dispatchFn: (action: any) => void
+) => {
   if (userInfo) {
     dispatchFn(loginSuccess(userInfo));
   } else {
@@ -40,7 +44,7 @@ export const useAppInitialization = () => {
 export const initializeApp = async (): Promise<UserInfo | null> => {
   const userInfo = await getCurrentUserFromServer();
 
-  const { default: store } = await import('@store/store');
+  const { default: store } = await import("@store/store");
   handleUserAuthState(userInfo, store.dispatch);
 
   return userInfo;
