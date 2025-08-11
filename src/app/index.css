@@ -52,6 +52,10 @@ button {
   transition: all 0.3s ease;
 }
 
+.swal2-container.swal2-center.swal2-backdrop-show {
+  z-index: 99999;
+}
+
 /* 모바일 최적화 */
 @media (max-width: 768px) {
   body {
