@@ -236,7 +236,7 @@ export const publicAxiosInstance = axios.create({
 });
 
 // 인증이 필요한 API용 인스턴스 (토큰 자동 추가)
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: baseUrl,
   timeout: 10000, // 10초 타임아웃 추가
   withCredentials: true,
@@ -262,7 +262,10 @@ publicAxiosInstance.interceptors.response.use(
     // 서버에서 성공 메시지를 보낸 경우 처리
     handleServerMessage(response);
     
-    return response;
+    return {
+      ...response,
+      data: response.data.data
+    };
   },
   async (error: AxiosError<ApiErrorResponse>) => {
     store.dispatch(stopLoading());
@@ -299,7 +302,10 @@ axiosInstance.interceptors.response.use(
     // 서버에서 성공 메시지를 보낸 경우 처리
     handleServerMessage(response);
     
-    return response;
+    return {
+      ...response,
+      data: response.data.data
+    };
   },
 
   async (error: AxiosError<ApiErrorResponse>) => {
