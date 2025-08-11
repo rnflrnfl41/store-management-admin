@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .login-container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -222,9 +222,10 @@
 }
 
 /* 모바일 최적화 */
-@media (max-width: 480px) {
+ @media (max-width: 480px) {
   .login-container {
     padding: 16px;
+    overflow : auto;
   }
   
   .login-card {
@@ -233,23 +234,11 @@
   }
   
   .login-logo {
-    width: 200px;
-  }
+    width: 250px;
+  } 
   
   .login-title {
     font-size: 24px;
-  }
-  
-  .form-group {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-  
-  .form-label {
-    min-width: auto;
-    text-align: left;
-    font-size: 14px;
   }
   
   .form-input {
@@ -261,51 +250,4 @@
     padding: 16px;
     font-size: 16px;
   }
-}
-
-/* 다크 모드 지원 */
-@media (prefers-color-scheme: dark) {
-  .login-container {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  }
-  
-  .login-card {
-    background-color: #2d3748;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  }
-  
-  .login-title {
-    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .form-label {
-    color: #e2e8f0;
-  }
-  
-  .form-input {
-    background-color: #4a5568;
-    border-color: #718096;
-    color: #ffffff;
-  }
-  
-  .form-input:focus {
-    background-color: #2d3748;
-    border-color: #667eea;
-  }
-  
-  .form-input:disabled {
-    background-color: #2d3748;
-    color: #a0aec0;
-  }
-  
-  .form-input::placeholder {
-    color: #a0aec0;
-  }
-  
-  .remember-me-label {
-    color: #cbd5e0;
-  }
-}
+} 
