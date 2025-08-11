@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   return (
     <div className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-header">
-        <h2>관리자</h2>
+        <h2>관리자 메뉴</h2>
       </div>
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
