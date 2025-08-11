@@ -78,17 +78,11 @@ export default function Login() {
                 localStorage.removeItem('rememberedLoginId');
             }
 
-            // 로그인 성공 메시지 표시
-            dispatch(setMessage({
-                message: "로그인되었습니다.",
-                type: "success"
-            }));
-
             // 로그인 성공 후 메인 페이지로 이동
             navigate("/dashboard");
 
         } catch (error) {
-            console.error("로그인 실패:", error);
+            console.log(error);
             // 에러 메시지는 axiosInstance에서 자동으로 처리됨
         }
     };
