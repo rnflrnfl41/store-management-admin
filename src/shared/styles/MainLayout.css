@@ -3,11 +3,12 @@
   height: 100vh;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .main-content {
   flex: 1;
-  margin-left: 250px;
+  margin-left: 300px;
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
@@ -16,10 +17,10 @@
 
 .content-area {
   flex: 1;
-  padding: 20px;
-  background-color: #f8f9fa;
+  padding: 30px;
+  background: transparent;
   overflow-y: auto;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 80px);
 }
 
 .mobile-overlay {
@@ -29,8 +30,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(102, 126, 234, 0.2);
+  backdrop-filter: blur(4px);
   z-index: 999;
+  transition: all 0.3s ease;
 }
 
 .mobile-overlay.active {
@@ -38,12 +41,13 @@
 }
 
 /* 모바일 대응 */
-@media (max-width: 768px) {
+@media (max-width: 796px) {
   .main-content {
     margin-left: 0;
   }
   
   .content-area {
-    padding: 15px;
+    padding: 20px;
+    height: calc(100vh - 70px);
   }
 }
