@@ -1,35 +1,25 @@
+import '@css/StoreList.css';
+
 const StoreList = () => {
   return (
     <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '20px',
-        flexWrap: 'wrap',
-        gap: '10px'
-      }}>
-        <h1 style={{ margin: 0 }}>매장 관리</h1>
-        <button style={{ 
-          background: '#3498db', 
-          color: 'white', 
-          border: 'none', 
-          padding: '10px 20px', 
-          borderRadius: '4px', 
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}>
-          매장 추가
+      <div className="store-header">
+        <div className="store-title-section">
+          <h1>매장 관리</h1>
+          <p>매장 정보를 관리하고 수정하세요</p>
+        </div>
+        <button className="store-add-btn">
+          + 매장 추가
         </button>
       </div>
-      <div style={{ 
-        background: 'white', 
-        borderRadius: '8px', 
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
-        padding: '20px' 
-      }}>
-        <p>매장 목록이 여기에 표시됩니다.</p>
+      
+      <div className="store-content">
+        <div className="store-empty-icon">🏪</div>
+        <h3 className="store-empty-title">매장이 없습니다</h3>
+        <p className="store-empty-description">첫 번째 매장을 추가해보세요!</p>
+        <button className="store-empty-btn">
+          매장 추가하기
+        </button>
       </div>
     </div>
   );
