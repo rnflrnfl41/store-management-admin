@@ -61,11 +61,14 @@ export default function Login() {
             return;
         }
 
+        const requestData = {
+            loginId: formState.userId.trim(),
+            password: formState.password,
+            adminLogin: true,
+        };
+
         try {
-            const response = await publicAxiosInstance.post("/auth/login", {
-                loginId: formState.userId.trim(),
-                password: formState.password,
-            });
+            const response = await publicAxiosInstance.post("/auth/login", requestData);
 
             const userData = response.data;
 
