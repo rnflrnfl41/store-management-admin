@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { axiosInstance } from '@utils/axiosInstance';
-import { setMessage } from '@store/messageSlice';
-import styles from '@css/UserModal.module.css';
 
-interface User {
-  id: string;
-  loginId: string;
-  password: string;
-  name: string;
-}
+import { axiosInstance } from '@utils/axiosInstance';
+import { showSuccess } from '@utils/alertUtils';
+import styles from '@css/UserModal.module.css';
+import type { User, ModalMode } from '@types';
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   user?: User | null;
-  mode?: 'create' | 'edit';
+  mode?: ModalMode;
   storeId: string;
 }
 
@@ -34,7 +28,7 @@ interface FormErrors {
 }
 
 const UserModal = ({ isOpen, onClose, onSuccess, user, mode = 'create', storeId }: UserModalProps) => {
-  const dispatch = useDispatch();
+
   
   const [formData, setFormData] = useState<UserFormData>({
     loginId: '',
@@ -103,12 +97,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode = 'create', storeId 
         response = await axiosInstance.post('/user', submitData);
       }
 
-      dispatch(
-        setMessage({
-          message: response.data,
-          type: 'success',
-        })
-      );
+      await showSuccess(response.data);
 
       onSuccess?.();
       handleClose();

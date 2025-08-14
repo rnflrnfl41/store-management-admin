@@ -1,21 +1,26 @@
-import type { UserInfo } from './auth.types';
 
-export interface LoadingState {
-  isLoading: boolean;
+
+// Store 관련 타입
+export interface Store {
+  publicId: string;
+  name: string;
+  ownerName: string;
+  phone: string;
 }
 
-export interface MessageState {
-  message: string | null;
-  type: 'success' | 'error' | 'info' | null;
+// User 관련 타입
+export interface User {
+  id: string;
+  loginId: string;
+  password: string;
+  name: string;
 }
 
-export interface UserState {
-  userInfo: UserInfo | null;
+// Store와 User를 함께 관리하는 타입
+export interface StoreWithUsers {
+  store: Store;
+  users: User[];
 }
 
-// Store 전체 타입 (RootState) - 실제 store 구조에 맞게 수정
-export interface RootState {
-  user: UserState;
-  loading: LoadingState;
-  message: MessageState;
-}
+// 모달 모드 타입
+export type ModalMode = 'create' | 'edit';

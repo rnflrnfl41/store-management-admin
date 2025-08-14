@@ -4,25 +4,16 @@ import { axiosInstance } from '@utils/axiosInstance';
 import { selectUserInfo } from '@store/userSlice';
 import StoreModal from './StoreModal';
 import styles from '@css/StoreList.module.css';
-import { showConfirm } from '@utils/confirmDialog';
-import { useDispatch } from 'react-redux';
-import { setMessage } from '@store/messageSlice';
-
-interface Store {
-  publicId: string;
-  name: string;
-  ownerName: string;
-  phone: string;
-}
+import { showConfirm, showSuccess, showError } from '@utils/alertUtils';
+import type { Store, ModalMode } from '@types';
 
 const StoreList = () => {
-  const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo);
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [modalMode, setModalMode] = useState<ModalMode>('create');
 
   //모든 store 정보 불러오기
   const fetchStores = async () => {
@@ -77,22 +68,20 @@ const StoreList = () => {
     await showConfirm(
       {
         html: `"${storeName}" 매장을 삭제하시겠습니까?`,
-        icon: 'info'
+        icon: 'info',
       },
       async () => {
         try {
           const response = await axiosInstance.delete(`/store/${storeId}`);
 
-          dispatch(
-            setMessage({
-              message: response.data,
-              type: 'success',
-            })
-          );
+          // 성공 메시지 표시
+          await showSuccess(response.data);
 
           fetchStores();
 
         } catch (error) {
+          // 에러 메시지 표시
+          await showError('매장 삭제 중 오류가 발생했습니다.');
           console.log(error);
         }
       }

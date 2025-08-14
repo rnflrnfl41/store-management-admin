@@ -2,40 +2,19 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { axiosInstance } from '@utils/axiosInstance';
 import { selectUserInfo } from '@store/userSlice';
-import { showConfirm } from '@utils/confirmDialog';
-import { useDispatch } from 'react-redux';
-import { setMessage } from '@store/messageSlice';
+import { showConfirm, showSuccess } from '@utils/alertUtils';
 import UserModal from './UserModal';
 import styles from '@css/UserList.module.css';
-
-interface Store {
-  publicId: string;
-  name: string;
-  ownerName: string;
-  phone: string;
-}
-
-interface User {
-  id: string;
-  loginId: string;
-  password: string;
-  name: string;
-}
-
-interface StoreWithUsers {
-  store: Store;
-  users: User[];
-}
+import type { Store, User, StoreWithUsers, ModalMode } from '@types';
 
 const UserList = () => {
-  const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo);
   const [storesWithUsers, setStoresWithUsers] = useState<StoreWithUsers[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [modalMode, setModalMode] = useState<ModalMode>('create');
 
   const fetchStoresWithUsers = async () => {
     try {
@@ -114,12 +93,7 @@ const UserList = () => {
             try {
               const response = await axiosInstance.delete(`/user/${userId}`);
     
-              dispatch(
-                setMessage({
-                  message: response.data,
-                  type: 'success',
-                })
-              );
+              await showSuccess(response.data);
     
               fetchStoresWithUsers();
     

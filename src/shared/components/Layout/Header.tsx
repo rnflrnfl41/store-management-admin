@@ -17,7 +17,7 @@ const Header = ({ onMenuToggle }: HeaderProps) => {
 
     try {
 
-      await publicAxiosInstance.post("auth/logout");
+      await publicAxiosInstance.post("/auth/logout");
       dispatch(logout());
       navigate("/login");
 

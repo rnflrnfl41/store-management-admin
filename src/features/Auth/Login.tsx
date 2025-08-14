@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { publicAxiosInstance } from "@utils/axiosInstance";
 import { loginSuccess } from "@store/userSlice";
-import { setMessage } from "@store/messageSlice";
+import { showError } from "@utils/alertUtils";
 import logo from "@images/company-logo.png";
 import "@css/login.css";
 
@@ -31,22 +31,16 @@ export default function Login() {
     });
 
     // 유효성 검사 함수
-    const validateForm = (): boolean => {
+    const validateForm = async (): Promise<boolean> => {
         // 아이디 검증
         if (!formState.userId.trim()) {
-            dispatch(setMessage({
-                message: "아이디를 입력해주세요.",
-                type: "error"
-            }));
+            await showError("아이디를 입력해주세요.");
             return false;
         }
 
         // 비밀번호 검증
         if (!formState.password) {
-            dispatch(setMessage({
-                message: "비밀번호를 입력해주세요.",
-                type: "error"
-            }));
+            await showError("비밀번호를 입력해주세요.");
             return false;
         }
 
@@ -57,7 +51,7 @@ export default function Login() {
         e.preventDefault();
 
         // 유효성 검사
-        if (!validateForm()) {
+        if (!(await validateForm())) {
             return;
         }
 

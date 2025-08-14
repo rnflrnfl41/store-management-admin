@@ -2,7 +2,7 @@ import axios from "axios";
 import type { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import Swal from "sweetalert2";
 import store from "@store/store";
-import { setMessage } from "@store/messageSlice";
+import { showSuccess, showError } from "./alertUtils";
 import { startLoading, stopLoading } from "@store/loadingSlice";
 import { logout, updateAccessToken } from '@store/userSlice';
 import type { ApiErrorResponse } from '@types';
@@ -50,41 +50,26 @@ const refreshAccessToken = async (): Promise<string> => {
   } catch (error: any) {
     // 서버에서 보낸 에러 메시지가 있는 경우 우선 처리
     const errorData = error.response?.data;
-    if (errorData?.message) {
-      store.dispatch(
-        setMessage({
-          message: errorData.message,
-          type: "error",
-        })
-      );
-    } else {
-      // 서버에서 메시지를 보내지 않은 예외적인 경우만 클라이언트에서 처리
-      const status = error.response?.status;
-      
-      switch (status) {
-        case 500:
-        case 502:
-        case 503:
-          // 서버 오류
-          store.dispatch(
-            setMessage({
-              message: "서버 오류로 인해 토큰 갱신에 실패했습니다. 잠시 후 다시 시도해주세요.",
-              type: "error",
-            })
-          );
-          break;
-        default:
-          // 네트워크 오류
-          if (!error.response) {
-            store.dispatch(
-              setMessage({
-                message: "네트워크 연결을 확인해주세요.",
-                type: "error",
-              })
-            );
-          }
-      }
-    }
+         if (errorData?.message) {
+       await showError(errorData.message);
+     } else {
+       // 서버에서 메시지를 보내지 않은 예외적인 경우만 클라이언트에서 처리
+       const status = error.response?.status;
+       
+       switch (status) {
+         case 500:
+         case 502:
+         case 503:
+           // 서버 오류
+           await showError("서버 오류로 인해 토큰 갱신에 실패했습니다. 잠시 후 다시 시도해주세요.");
+           break;
+         default:
+           // 네트워크 오류
+           if (!error.response) {
+             await showError("네트워크 연결을 확인해주세요.");
+           }
+       }
+     }
 
     // 모든 refresh token 실패 시 로그아웃 처리
     store.dispatch(logout());
@@ -110,120 +95,60 @@ const clearUserInfo = async (reason: string = "세션이 만료되었습니다. 
 };
 
 // 서버 응답에서 메시지 처리 함수
-const handleServerMessage = (response: AxiosResponse) => {
+const handleServerMessage = async (response: AxiosResponse) => {
   const data = response.data;
   
   // 서버에서 성공 메시지를 보낸 경우
   if (data.message && data.success) {
-    store.dispatch(
-      setMessage({
-        message: data.message,
-        type: "success",
-      })
-    );
+    await showSuccess(data.message);
   }
 };
 
 // 서버 에러 메시지 처리 함수
-const handleServerError = (error: AxiosError<ApiErrorResponse>) => {
+const handleServerError = async (error: AxiosError<ApiErrorResponse>) => {
   const status = error.response?.status;
   const errorData = error.response?.data;
 
   // 서버에서 보낸 에러 메시지가 있는 경우
   if (errorData?.message) {
-    store.dispatch(
-      setMessage({
-        message: errorData.message,
-        type: "error",
-      })
-    );
+    await showError(errorData.message);
     return;
   }
 
   // HTTP 상태 코드별 기본 메시지
   switch (status) {
     case 400:
-      store.dispatch(
-        setMessage({
-          message: "잘못된 요청입니다. 입력값을 확인해주세요.",
-          type: "error",
-        })
-      );
+      await showError("잘못된 요청입니다. 입력값을 확인해주세요.");
       break;
     case 401:
-      store.dispatch(
-        setMessage({
-          message: "인증이 필요합니다. 다시 로그인해주세요.",
-          type: "error",
-        })
-      );
+      await showError("인증이 필요합니다. 다시 로그인해주세요.");
       break;
     case 403:
-      store.dispatch(
-        setMessage({
-          message: "접근 권한이 없습니다.",
-          type: "error",
-        })
-      );
+      await showError("접근 권한이 없습니다.");
       break;
     case 404:
-      store.dispatch(
-        setMessage({
-          message: "요청한 리소스를 찾을 수 없습니다.",
-          type: "error",
-        })
-      );
+      await showError("요청한 리소스를 찾을 수 없습니다.");
       break;
     case 409:
-      store.dispatch(
-        setMessage({
-          message: "이미 존재하는 데이터입니다.",
-          type: "error",
-        })
-      );
+      await showError("이미 존재하는 데이터입니다.");
       break;
     case 422:
-      store.dispatch(
-        setMessage({
-          message: "입력값이 올바르지 않습니다.",
-          type: "error",
-        })
-      );
+      await showError("입력값이 올바르지 않습니다.");
       break;
     case 500:
-      store.dispatch(
-        setMessage({
-          message: "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-          type: "error",
-        })
-      );
+      await showError("서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
       break;
     case 502:
     case 503:
     case 504:
-      store.dispatch(
-        setMessage({
-          message: "서버가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.",
-          type: "error",
-        })
-      );
+      await showError("서버가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.");
       break;
     default:
       // 네트워크 오류
       if (!error.response) {
-        store.dispatch(
-          setMessage({
-            message: "네트워크 연결을 확인해주세요.",
-            type: "error",
-          })
-        );
+        await showError("네트워크 연결을 확인해주세요.");
       } else {
-        store.dispatch(
-          setMessage({
-            message: error.message || "알 수 없는 오류가 발생했습니다.",
-            type: "error",
-          })
-        );
+        await showError(error.message || "알 수 없는 오류가 발생했습니다.");
       }
   }
 };
@@ -256,11 +181,11 @@ publicAxiosInstance.interceptors.request.use(
 
 // public 인스턴스용 응답 인터셉터 (성공/에러 메시지 처리)
 publicAxiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => {
+  async (response: AxiosResponse) => {
     store.dispatch(stopLoading());
     
     // 서버에서 성공 메시지를 보낸 경우 처리
-    handleServerMessage(response);
+    await handleServerMessage(response);
     
     return {
       ...response,
@@ -269,7 +194,7 @@ publicAxiosInstance.interceptors.response.use(
   },
   async (error: AxiosError<ApiErrorResponse>) => {
     store.dispatch(stopLoading());
-    handleServerError(error);
+    await handleServerError(error);
     return Promise.reject(error);
   }
 );
@@ -296,11 +221,11 @@ axiosInstance.interceptors.request.use(
 
 // 응답 인터셉터 설정
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => {
+  async (response: AxiosResponse) => {
     store.dispatch(stopLoading());
     
     // 서버에서 성공 메시지를 보낸 경우 처리
-    handleServerMessage(response);
+    await handleServerMessage(response);
     
     return {
       ...response,
@@ -355,7 +280,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // 서버 에러 메시지 처리
-    handleServerError(error);
+    await handleServerError(error);
 
     return Promise.reject(error);
   }

@@ -5,7 +5,7 @@ import { useAppInitialization } from '@utils/useAppInitialization';
 import GlobalSpinner from '@components/GlobalSpinner';
 import Login from '@features/Auth/Login';
 import store from '@store/store';
-import GlobalAlert from '@components/GlobalAlert';
+
 import { selectUserInfo } from '@store/userSlice';
 import MainLayout from '@components/Layout/MainLayout';
 import Dashboard from '@features/Dashboard/Dashboard';
@@ -24,7 +24,6 @@ function AppContent() {
   return (
     <>
       <GlobalSpinner />
-      <GlobalAlert />
       <Routes>
         <Route 
           path="/login"

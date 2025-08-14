@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import { axiosInstance } from '@utils/axiosInstance';
 import styles from '@css/StoreModal.module.css';
-import { useDispatch } from 'react-redux';
-import { setMessage } from '@store/messageSlice';
 
-interface Store {
-  publicId: string;
-  name: string;
-  ownerName: string;
-  phone: string;
-}
+import { showSuccess } from '@utils/alertUtils';
+import type { Store, ModalMode } from '@types';
 
 interface StoreModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   store?: Store | null;
-  mode?: 'create' | 'edit';
+  mode?: ModalMode;
 }
 
 interface StoreFormData {
@@ -32,7 +26,7 @@ interface FormErrors {
 
 const StoreModal = ({ isOpen, onClose, onSuccess, store, mode = 'create' }: StoreModalProps) => {
   
-  const dispatch = useDispatch();
+
   
   const [formData, setFormData] = useState<StoreFormData>({
     name: '',
@@ -90,12 +84,7 @@ const StoreModal = ({ isOpen, onClose, onSuccess, store, mode = 'create' }: Stor
         response = await axiosInstance.post('/store', formData);
       }
 
-      dispatch(
-        setMessage({
-          message: response.data,
-          type: 'success',
-        })
-      );
+      await showSuccess(response.data);
 
       onSuccess?.();
       handleClose();
