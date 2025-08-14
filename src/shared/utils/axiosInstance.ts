@@ -231,14 +231,14 @@ const handleServerError = (error: AxiosError<ApiErrorResponse>) => {
 // 인증이 필요 없는 API용 인스턴스 (로그인, 회원가입 등)
 export const publicAxiosInstance = axios.create({
   baseURL: baseUrl,
-  timeout: 10000,
+  timeout: 20000,
   withCredentials: true,
 });
 
 // 인증이 필요한 API용 인스턴스 (토큰 자동 추가)
 export const axiosInstance = axios.create({
   baseURL: baseUrl,
-  timeout: 10000, // 10초 타임아웃 추가
+  timeout: 20000, // 15초 타임아웃 추가
   withCredentials: true,
 });
 
