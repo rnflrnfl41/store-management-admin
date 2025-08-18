@@ -58,11 +58,10 @@ export default function Login() {
         const requestData = {
             loginId: formState.userId.trim(),
             password: formState.password,
-            adminLogin: true,
         };
 
         try {
-            const response = await publicAxiosInstance.post("/auth/login", requestData);
+            const response = await publicAxiosInstance.post("/auth/admin/login", requestData);
 
             const userData = response.data;
 

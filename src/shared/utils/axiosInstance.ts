@@ -33,7 +33,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const refreshAccessToken = async (): Promise<string> => {
   try {
     const response = await axios.post(
-      "/auth/refresh",
+      "/auth/admin/refresh-token",
       {},
       {
         baseURL: baseUrl,

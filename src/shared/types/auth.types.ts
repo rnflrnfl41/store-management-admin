@@ -9,5 +9,4 @@ export interface UserInfo {
 export interface LoginRequest {
   loginId: string;
   password: string;
-  adminLogin: boolean;
 }
