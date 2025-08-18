@@ -161,7 +161,7 @@ useEffect(() => {
   const initializeApp = async () => {
     try {
       // 1. 쿠키의 refreshToken으로 자동 로그인 시도
-      const response = await publicAxiosInstance.post("/auth/refresh-token");
+      const response = await publicAxiosInstance.post("/auth/admin/refresh-token");
       
       // 2. 새로운 Access Token으로 Redux store 업데이트
       dispatch(loginSuccess(response.data));
