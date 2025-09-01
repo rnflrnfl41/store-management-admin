@@ -63,7 +63,7 @@ const StoreList = () => {
   };
 
   //매장 삭제 
-  const handleDeleteStore = async (storeId: string, storeName: string) => {
+  const handleDeleteStore = async (storeId: number, storeName: string) => {
 
     await showConfirm(
       {
@@ -127,14 +127,14 @@ const StoreList = () => {
       ) : (
         <div className={styles.store_list}>
           {stores.map((store) => (
-            <div key={store.publicId} className={styles.store_card} onClick={() => handleOpenEditModal(store)}>
+            <div key={store.id} className={styles.store_card} onClick={() => handleOpenEditModal(store)}>
               <div className={styles.store_card_header}>
                 <h3 className={styles.store_name}>{store.name}</h3>
                 <button
                   className={styles.store_delete_btn}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteStore(store.publicId, store.name);
+                    handleDeleteStore(store.id, store.name);
                   }}
                 >
                   ×

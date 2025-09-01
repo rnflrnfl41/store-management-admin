@@ -79,7 +79,7 @@ const StoreModal = ({ isOpen, onClose, onSuccess, store, mode = 'create' }: Stor
       let response;
 
       if (mode === 'edit' && store) {
-        response = await axiosInstance.patch(`/store/${store.publicId}`, formData);
+        response = await axiosInstance.patch(`/store/${store.id}`, formData);
       } else {
         response = await axiosInstance.post('/store', formData);
       }

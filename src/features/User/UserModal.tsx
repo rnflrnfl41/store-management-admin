@@ -11,14 +11,14 @@ interface UserModalProps {
   onSuccess?: () => void;
   user?: User | null;
   mode?: ModalMode;
-  storeId: string;
+  storeId: number;
 }
 
 interface UserFormData {
   loginId: string;
   password: string;
   name: string;
-  storeId: string;
+  storeId: number;
 }
 
 interface FormErrors {
@@ -34,7 +34,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode = 'create', storeId 
     loginId: '',
     password: '',
     name: '',
-    storeId: '',
+    storeId: 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -110,7 +110,7 @@ const UserModal = ({ isOpen, onClose, onSuccess, user, mode = 'create', storeId 
   };
 
   const handleClose = () => {
-    setFormData({ loginId: '', password: '', name: '', storeId: '' });
+    setFormData({ loginId: '', password: '', name: '', storeId: 0 });
     setErrors({});
     onClose();
   };

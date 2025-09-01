@@ -13,7 +13,7 @@ const UserList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedStoreId, setSelectedStoreId] = useState<string>('');
+  const [selectedStoreId, setSelectedStoreId] = useState<number>();
   const [modalMode, setModalMode] = useState<ModalMode>('create');
 
   const fetchStoresWithUsers = async () => {
@@ -21,13 +21,14 @@ const UserList = () => {
       setIsLoading(true);
       // 먼저 모든 매장을 가져옴
       const storesResponse = await axiosInstance.get('/store/all');
+      console.log(storesResponse.data);
       const stores: Store[] = storesResponse.data;
 
       // 각 매장별로 사용자 목록을 가져옴
       const storesWithUsersData = await Promise.all(
         stores.map(async (store) => {
           try {
-            const usersResponse = await axiosInstance.get(`/user/${store.publicId}`);
+            const usersResponse = await axiosInstance.get(`/user/${store.id}`);
             return {
               store,
               users: usersResponse.data || []
@@ -58,14 +59,14 @@ const UserList = () => {
     }
   }, [userInfo]);
 
-  const handleOpenCreateModal = (storeId: string) => {
+  const handleOpenCreateModal = (storeId: number) => {
     setSelectedUser(null);
     setSelectedStoreId(storeId);
     setModalMode('create');
     setIsModalOpen(true);
   };
 
-  const handleOpenEditModal = (user: User, storeId: string) => {
+  const handleOpenEditModal = (user: User, storeId: number) => {
     setSelectedUser(user);
     setSelectedStoreId(storeId);
     setModalMode('edit');
@@ -75,7 +76,7 @@ const UserList = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
-    setSelectedStoreId('');
+    setSelectedStoreId(0);
   };
 
   const handleUserSuccess = () => {
@@ -136,7 +137,7 @@ const UserList = () => {
         </div>
       ) : (
         storesWithUsers.map(({ store, users }) => (
-          <div key={store.publicId} className={styles.store_section}>
+          <div key={store.id} className={styles.store_section}>
             <div className={styles.store_header}>
               <div className={styles.store_title}>
                 <span className={styles.store_icon}>🏪</span>
@@ -145,7 +146,7 @@ const UserList = () => {
               </div>
               <button 
                 className={styles.store_add_btn}
-                onClick={() => handleOpenCreateModal(store.publicId)}
+                onClick={() => handleOpenCreateModal(store.id)}
               >
                 + 사용자 추가
               </button>
@@ -159,7 +160,7 @@ const UserList = () => {
                   <p className={styles.user_empty_description}>이 매장의 첫 번째 사용자를 추가해보세요!</p>
                   <button 
                     className={styles.user_empty_btn} 
-                    onClick={() => handleOpenCreateModal(store.publicId)}
+                    onClick={() => handleOpenCreateModal(store.id)}
                   >
                     사용자 추가하기
                   </button>
@@ -170,7 +171,7 @@ const UserList = () => {
                     <div 
                       key={user.id} 
                       className={styles.user_card} 
-                      onClick={() => handleOpenEditModal(user, store.publicId)}
+                      onClick={() => handleOpenEditModal(user, store.id)}
                     >
                       <div className={styles.user_card_header}>
                         <h3 className={styles.user_name}>{user.name}</h3>
@@ -205,7 +206,7 @@ const UserList = () => {
         onSuccess={handleUserSuccess}
         user={selectedUser}
         mode={modalMode}
-        storeId={selectedStoreId}
+        storeId={selectedStoreId || 0}
       />
     </div>
   );
