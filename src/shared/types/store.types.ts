@@ -2,7 +2,7 @@
 
 // Store 관련 타입
 export interface Store {
-  publicId: string;
+  id: number;
   name: string;
   ownerName: string;
   phone: string;
